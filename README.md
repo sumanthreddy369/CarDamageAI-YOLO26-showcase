@@ -24,6 +24,10 @@ odometer, detects damage with a YOLO26 model, and produces a panel-by-panel repo
 
 The analysis runs as a LangGraph state graph; the dotted edges are the decision branch.
 
+![LangGraph inspection graph](images/14_langgraph_pipeline.png)
+
+<details><summary>Same graph as Mermaid</summary>
+
 ```mermaid
 graph TD;
   start([start]) --> collect --> analyze_photos --> identify_vehicle --> photo_set --> assess --> review
@@ -35,6 +39,8 @@ graph TD;
   auto_approved --> report
   report --> done([end])
 ```
+
+</details>
 
 Each inspection is traced in **Langfuse**: a span per step and per photo with its duration and outcome, and scores for
 the decision, damage count and condition grade. Traces carry counts and decisions only, never photos, VINs or plates.
