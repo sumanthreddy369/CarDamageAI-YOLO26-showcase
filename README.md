@@ -45,6 +45,15 @@ graph TD;
 Each inspection is traced in **Langfuse**: a span per step and per photo with its duration and outcome, and scores for
 the decision, damage count and condition grade. Traces carry counts and decisions only, never photos, VINs or plates.
 
+One real 10-photo inspection in a self-hosted Langfuse: every graph step and every photo is a span with its duration;
+rejected photos are flagged, and the trace carries the decision and grade as scores.
+
+![Langfuse trace of one inspection](images/15_langfuse_trace.png)
+
+| The review step: why the inspection needs a check | One photo: rejected by the quality gate |
+|---|---|
+| ![Langfuse review step](images/16_langfuse_review_step.png) | ![Langfuse photo step](images/17_langfuse_photo_step.png) |
+
 <p align="center"><img src="images/13_capture_page.png" width="300" alt="Guided capture page on a phone"></p>
 
 ## Tech stack
