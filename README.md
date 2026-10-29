@@ -20,6 +20,25 @@ odometer, detects damage with a YOLO26 model, and produces a panel-by-panel repo
 | **5. Condition report** | 30 exterior panels graded with damage type, severity and confidence, an overall 1–5 condition grade, and integrity checks (duplicate photos, capture time, GPS). |
 | **6. Decision** | Confident results are approved automatically; uncertain ones go to a reviewer portal; the client system receives an HMAC-signed webhook. |
 
+### Pipeline graph (LangGraph)
+
+The analysis runs as a LangGraph state graph; the dotted edges are the decision branch.
+
+```mermaid
+graph TD;
+  start([start]) --> collect --> analyze_photos --> identify_vehicle --> photo_set --> assess --> review
+  review -.-> retake_needed
+  review -.-> human_review
+  review -.-> auto_approved
+  retake_needed --> report
+  human_review --> report
+  auto_approved --> report
+  report --> done([end])
+```
+
+Each inspection is traced in **Langfuse**: a span per step and per photo with its duration and outcome, and scores for
+the decision, damage count and condition grade. Traces carry counts and decisions only, never photos, VINs or plates.
+
 <p align="center"><img src="images/13_capture_page.png" width="300" alt="Guided capture page on a phone"></p>
 
 ## Tech stack
@@ -27,6 +46,8 @@ odometer, detects damage with a YOLO26 model, and produces a panel-by-panel repo
 | Layer | Technology |
 |---|---|
 | AI / ML | Python, PyTorch, Ultralytics YOLO26, OpenCV, EasyOCR, ONNX |
+| Pipeline orchestration | LangGraph state graph with a 3-way decision branch |
+| Tracing | Langfuse: one trace per inspection, a span per step and per photo, decision and grade scores |
 | Inference service | FastAPI on a CUDA GPU |
 | Web application | C#, ASP.NET Core, Entity Framework Core |
 | Data | PostgreSQL, object storage |
